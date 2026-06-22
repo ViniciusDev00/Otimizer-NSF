@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrupador de Ordens com Cruzamento Excel</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+    <div class="no-print container">
+        <h2>📦 Ordens & Vínculo de Avisos</h2>
+        <p>Insira os arquivos necessários abaixo para cruzar os dados e gerar a folha única de separação.</p>
+        
+        <div class="upload-section">
+            <div class="upload-box">
+                <label class="field-label">1. PDFs das Ordens de Separação (Múltiplos):</label>
+                <label for="input-pdf" class="drop-zone">
+                    <span>📁 Selecionar PDFs das Ordens</span>
+                    <input type="file" id="input-pdf" accept=".pdf" multiple>
+                </label>
+                <div id="lista-pdfs" class="file-status">Nenhum PDF selecionado</div>
+            </div>
+
+            <div class="upload-box">
+                <label class="field-label">2. Planilha do Monday (Aviso Monday):</label>
+                <label for="input-monday" class="drop-zone monday-zone">
+                    <span>📊 Selecionar Arquivo Monday (.xlsx)</span>
+                    <input type="file" id="input-monday" accept=".xlsx">
+                </label>
+                <div id="status-monday" class="file-status">Nenhum arquivo do Monday selecionado</div>
+            </div>
+        </div>
+
+        <div class="ordenacao-section">
+            <label class="field-label">3. Organizar a lista por:</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="opcao-ordenacao" value="cliente" checked>
+                    <span>Nome do Cliente</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="opcao-ordenacao" value="peca">
+                    <span>Nome da Peça (Descrição)</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button id="btn-processar" class="btn-primary" disabled>⚡ Agrupar e Vincular Aviso</button>
+            <button id="btn-imprimir" class="btn-secondary" disabled>🖨️ Imprimir Lista Otimizada</button>
+        </div>
+    </div>
+
+    <div id="resultado-impressao" class="print-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
