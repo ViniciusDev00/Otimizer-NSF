@@ -214,53 +214,70 @@ document.getElementById('btn-processar').addEventListener('click', async functio
         return;
     }
 
-    // Monta a estrutura de tabela onde o cabeçalho fica dentro do thead para se repetir em várias folhas (Agora com 6 colunas)
+    // Cabeçalho comercial do documento (fixado no topo geral da folha)
     let htmlFinal = `
-        <table class="tabela-separacao">
-            <thead>
-                <tr>
-                    <td colspan="6" style="padding: 0; border: none;">
-                        <div class="header-impressao">
-                            <div class="header-logo">
-                                <img src="Logo.png" alt="Logo" onerror="this.style.display='none'">
-                            </div>
-                            <div class="header-titulo">
-                                <h3>📋 PROGRAMAÇÃO DE SEPARAÇÃO CONSOLIDADA</h3>
-                                <div class="meta-data">Data de Emissão: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th style="width: 25%;">Cliente</th>
-                    <th style="width: 12%;">N° de Aviso</th>
-                    <th style="width: 14%;">N° da Ordem</th>
-                    <th style="width: 38%;">Descrição do Item</th>
-                    <th style="width: 7%; text-align: center;">Qtd Tot</th>
-                    <th style="width: 4%; text-align: center;">Conf</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="header-impressao">
+            <div class="header-logo">
+                <img src="Logo.png" alt="Logo" onerror="this.style.display='none'">
+            </div>
+            <div class="header-titulo">
+                <h3>📋 PROGRAMAÇÃO DE SEPARAÇÃO CONSOLIDADA</h3>
+                <div class="meta-data">Data de Emissão: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+            </div>
+        </div>
     `;
 
     // Captura qual tipo de ordenação o usuário escolheu na tela antes de clicar em processar
     const tipoOrdenacao = document.querySelector('input[name="opcao-ordenacao"]:checked').value;
     const registrosOrdenados = Object.values(mapaAgrupadoGeral);
 
-    // Faz a ordenação baseada na escolha
+    // Faz a ordenação baseada na escolha do usuário
     if (tipoOrdenacao === "cliente") {
-        registrosOrdenados.sort((a, b) => a.cliente.localeCompare(b.cliente));
+        registrosOrdenados.sort((a, b) => a.cliente.localeCompare(b.cliente) || a.descricao.localeCompare(b.descricao));
     } else if (tipoOrdenacao === "peca") {
-        registrosOrdenados.sort((a, b) => a.descricao.localeCompare(b.descricao));
+        registrosOrdenados.sort((a, b) => a.descricao.localeCompare(b.descricao) || a.cliente.localeCompare(b.cliente));
     }
 
-    // Renderiza as linhas ordenadas
+    let clienteAtual = "";
+    let tabelaAberta = false;
+
+    // Varre os registros criando blocos visuais divididos por cliente
     registrosOrdenados.forEach(reg => {
+        
+        // Se mudou de cliente ou iniciou a renderização, fecha a tabela anterior e abre um novo bloco estrutural
+        if (reg.cliente !== clienteAtual) {
+            if (tabelaAberta) {
+                htmlFinal += `</tbody></table></div>`; // Fecha a tabela do cliente anterior
+            }
+            
+            clienteAtual = reg.cliente;
+            tabelaAberta = true;
+
+            // Insere uma divisória contendo o nome do Cliente. 
+            // page-break-after: avoid garante que a barra do cliente nunca fique sozinha no final da página.
+            htmlFinal += `
+                <div class="bloco-cliente-impressao" style="margin-bottom: 15px; page-break-after: avoid;">
+                    <div style="background-color: #0f172a; color: #ffffff; padding: 6px 10px; font-weight: bold; font-size: 13px; border-radius: 4px 4px 0 0; text-transform: uppercase;">
+                        👤 Cliente: ${clienteAtual}
+                    </div>
+                    <table class="tabela-separacao" style="border: 1px solid #cbd5e1; border-top: none; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 14%;">N° de Aviso</th>
+                                <th style="width: 14%;">N° da Ordem</th>
+                                <th style="width: 60%;">Descrição do Item</th>
+                                <th style="width: 8%; text-align: center;">Qtd Tot</th>
+                                <th style="width: 4%; text-align: center;">Conf</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+        }
+
         let textoOrdens = reg.ordens.join(', ');
         
         htmlFinal += `
-            <tr>
-                <td><strong>${reg.cliente}</strong></td>
+            <tr style="page-break-inside: avoid;">
                 <td><span style="font-family: monospace; font-size: 13px; font-weight: bold; color: #0f172a;">${reg.aviso}</span></td>
                 <td><span style="font-family: monospace; font-size: 12px; color: #475569;">${textoOrdens}</span></td>
                 <td>${reg.descricao}</td>
@@ -270,10 +287,10 @@ document.getElementById('btn-processar').addEventListener('click', async functio
         `;
     });
 
-    htmlFinal += `
-            </tbody>
-        </table>
-    `;
+    // Se restou uma tabela aberta ao fim do loop, efetua o fechamento das tags
+    if (tabelaAberta) {
+        htmlFinal += `</tbody></table></div>`;
+    }
 
     // Atualiza o container da página e ativa o botão de impressão
     containerResultado.innerHTML = htmlFinal;
