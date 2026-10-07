@@ -77,7 +77,7 @@ function buscarAvisoNoExcel(numeroPedido) {
     return "Não Encontrado";
 }
 
-// FUNÇÃO AUXILIAR: Limpa de vez o nome do cliente tirando lixos, números de cópia e abreviações fiscais
+// FUNÇÃO AUXILIAR: Limpa o nome do cliente tirando lixos, números de cópia e abreviações fiscais
 function limparNomeCliente(nomeBruto) {
     if (!nomeBruto) return "CLIENTE DESCONHECIDO";
     
@@ -162,13 +162,13 @@ document.getElementById('btn-processar').addEventListener('click', async functio
                     nomeClienteBruto = nomeClienteAlternativo || "CLIENTE DESCONHECIDO";
                 }
                 
-                // APLICAÇÃO DA LIMPEZA DEFINITIVA NO NOME DO CLIENTE
+                // Aplicação da limpeza no nome do cliente
                 let nomeClienteFinal = limparNomeCliente(nomeClienteBruto);
 
                 // Realiza o cruzamento de dados buscando o aviso correto no Excel do Monday
                 let avisoVinculado = buscarAvisoNoExcel(nrPedido);
 
-                // Varre a tabela de itens procurando linhas que possuam o formato de quantidade (ex: "36,00")
+                // Varre a tabela de itens procurando linhas com formato de quantidade (ex: "36,00")
                 for (let j = 0; j < linhasTexto.length; j++) {
                     if (/^\d+,\d{2}$/.test(linhasTexto[j])) {
                         let qtd = parseFloat(linhasTexto[j].replace(',', '.'));
@@ -177,7 +177,7 @@ document.getElementById('btn-processar').addEventListener('click', async functio
                             let descricao = linhasTexto[j - 1].replace(/["']/g, '').trim();
                             let produto = linhasTexto[j - 2].replace(/["']/g, '').trim();
                             
-                            // Ignora strings de cabeçalho do relatório que possam coincidir com a validação
+                            // Ignora strings de cabeçalho do relatório
                             if (produto.toUpperCase() === "PRODUTO" || produto.toUpperCase() === "DESCRIÇÃO" || produto.toUpperCase() === "LOCALIZAÇÃO") {
                                 continue;
                             }
@@ -187,7 +187,6 @@ document.getElementById('btn-processar').addEventListener('click', async functio
 
                             if (mapaAgrupadoGeral[chaveAgrupamento]) {
                                 mapaAgrupadoGeral[chaveAgrupamento].qtd += qtd;
-                                // Se o mesmo produto aparecer em outro arquivo para o mesmo cliente, adiciona a nova ordem à lista
                                 if (nrPedido && !mapaAgrupadoGeral[chaveAgrupamento].ordens.includes(nrPedido)) {
                                     mapaAgrupadoGeral[chaveAgrupamento].ordens.push(nrPedido);
                                 }
@@ -214,90 +213,147 @@ document.getElementById('btn-processar').addEventListener('click', async functio
         return;
     }
 
-    // Cabeçalho comercial do documento (fixado no topo geral da folha)
-    let htmlFinal = `
-        <div class="header-impressao">
-            <div class="header-logo">
-                <img src="Logo.png" alt="Logo" onerror="this.style.display='none'">
-            </div>
-            <div class="header-titulo">
-                <h3>📋 PROGRAMAÇÃO DE SEPARAÇÃO CONSOLIDADA</h3>
-                <div class="meta-data">Data de Emissão: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
-            </div>
-        </div>
-    `;
-
-    // Captura qual tipo de ordenação o usuário escolheu na tela antes de clicar em processar
+    // Captura as opções selecionadas na interface
+    const modoRelatorio = document.querySelector('input[name="opcao-modo"]:checked').value;
     const tipoOrdenacao = document.querySelector('input[name="opcao-ordenacao"]:checked').value;
     const registrosOrdenados = Object.values(mapaAgrupadoGeral);
 
-    // Faz a ordenação baseada na escolha do usuário
+    // Ordena os registros
     if (tipoOrdenacao === "cliente") {
         registrosOrdenados.sort((a, b) => a.cliente.localeCompare(b.cliente) || a.descricao.localeCompare(b.descricao));
     } else if (tipoOrdenacao === "peca") {
         registrosOrdenados.sort((a, b) => a.descricao.localeCompare(b.descricao) || a.cliente.localeCompare(b.cliente));
     }
 
-    let clienteAtual = "";
-    let tabelaAberta = false;
-
-    // Varre os registros criando blocos visuais divididos por cliente
-    registrosOrdenados.forEach(reg => {
-        
-        // Se mudou de cliente ou iniciou a renderização, fecha a tabela anterior e abre um novo bloco estrutural
-        if (reg.cliente !== clienteAtual) {
-            if (tabelaAberta) {
-                htmlFinal += `</tbody></table></div>`; // Fecha a tabela do cliente anterior
-            }
-            
-            clienteAtual = reg.cliente;
-            tabelaAberta = true;
-
-            // Insere uma divisória contendo o nome do Cliente. 
-            // page-break-after: avoid garante que a barra do cliente nunca fique sozinha no final da página.
-            htmlFinal += `
-                <div class="bloco-cliente-impressao" style="margin-bottom: 15px; page-break-after: avoid;">
-                    <div style="background-color: #0f172a; color: #ffffff; padding: 6px 10px; font-weight: bold; font-size: 13px; border-radius: 4px 4px 0 0; text-transform: uppercase;">
-                        👤 Cliente: ${clienteAtual}
-                    </div>
-                    <table class="tabela-separacao" style="border: 1px solid #cbd5e1; border-top: none; width: 100%;">
-                        <thead>
-                            <tr>
-                                <th style="width: 14%;">N° de Aviso</th>
-                                <th style="width: 14%;">N° da Ordem</th>
-                                <th style="width: 60%;">Descrição do Item</th>
-                                <th style="width: 8%; text-align: center;">Qtd Tot</th>
-                                <th style="width: 4%; text-align: center;">Conf</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-        }
-
-        let textoOrdens = reg.ordens.join(', ');
-        
-        htmlFinal += `
-            <tr style="page-break-inside: avoid;">
-                <td><span style="font-family: monospace; font-size: 13px; font-weight: bold; color: #0f172a;">${reg.aviso}</span></td>
-                <td><span style="font-family: monospace; font-size: 12px; color: #475569;">${textoOrdens}</span></td>
-                <td>${reg.descricao}</td>
-                <td style="text-align: center; font-size: 13px;"><strong>${reg.qtd}</strong></td>
-                <td class="col-check"><div class="box-check"></div></td>
-            </tr>
-        `;
-    });
-
-    // Se restou uma tabela aberta ao fim do loop, efetua o fechamento das tags
-    if (tabelaAberta) {
-        htmlFinal += `</tbody></table></div>`;
+    // Aplica ou remove a classe do body para adaptar os estilos de impressão
+    if (modoRelatorio === "corporativo") {
+        document.body.classList.add("modo-corporativo");
+    } else {
+        document.body.classList.remove("modo-corporativo");
     }
 
-    // Atualiza o container da página e ativa o botão de impressão
+    let htmlFinal = "";
+
+    // ==========================================
+    // 📊 OPÇÃO 1: MODO CORPORATIVO COMPACTO (1 PÁGINA)
+    // ==========================================
+    if (modoRelatorio === "corporativo") {
+        let totalPecasGeral = registrosOrdenados.reduce((acc, item) => acc + item.qtd, 0);
+
+        htmlFinal = `
+            <div class="header-compacto">
+                <div>
+                    <h4>📊 CONTROLE GERENCIAL DE SEPARAÇÃO CONSOLIDADO</h4>
+                </div>
+                <div class="meta-info">
+                    Emissão: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})} | 
+                    <strong>Total Peças: ${totalPecasGeral}</strong> | 
+                    <strong>Linhas: ${registrosOrdenados.length}</strong>
+                </div>
+            </div>
+
+            <table class="tabela-corporativa-compacta">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Cliente</th>
+                        <th style="width: 12%;">N° Aviso</th>
+                        <th style="width: 13%;">Ordem(ns)</th>
+                        <th style="width: 42%;">Descrição do Item / Peça</th>
+                        <th style="width: 8%; text-align: center;">Qtd</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        registrosOrdenados.forEach(reg => {
+            let textoOrdens = reg.ordens.join(', ');
+            htmlFinal += `
+                <tr>
+                    <td><strong>${reg.cliente}</strong></td>
+                    <td><span style="font-family: monospace; font-weight: bold;">${reg.aviso}</span></td>
+                    <td><span style="font-family: monospace;">${textoOrdens}</span></td>
+                    <td>${reg.descricao}</td>
+                    <td style="text-align: center; font-weight: bold;">${reg.qtd}</td>
+                </tr>
+            `;
+        });
+
+        htmlFinal += `
+                </tbody>
+            </table>
+        `;
+
+    // ==========================================
+    // 📋 OPÇÃO 2: MODO PADRÃO (SEPARAÇÃO POR CLIENTE)
+    // ==========================================
+    } else {
+        htmlFinal = `
+            <div class="header-impressao">
+                <div class="header-logo">
+                    <img src="Logo.png" alt="Logo" onerror="this.style.display='none'">
+                </div>
+                <div class="header-titulo">
+                    <h3>📋 PROGRAMAÇÃO DE SEPARAÇÃO CONSOLIDADA</h3>
+                    <div class="meta-data">Data de Emissão: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            </div>
+        `;
+
+        let clienteAtual = "";
+        let tabelaAberta = false;
+
+        registrosOrdenados.forEach(reg => {
+            if (reg.cliente !== clienteAtual) {
+                if (tabelaAberta) {
+                    htmlFinal += `</tbody></table></div>`;
+                }
+                
+                clienteAtual = reg.cliente;
+                tabelaAberta = true;
+
+                htmlFinal += `
+                    <div class="bloco-cliente-impressao" style="margin-bottom: 15px; page-break-after: avoid;">
+                        <div style="background-color: #0f172a; color: #ffffff; padding: 6px 10px; font-weight: bold; font-size: 13px; border-radius: 4px 4px 0 0; text-transform: uppercase;">
+                            👤 Cliente: ${clienteAtual}
+                        </div>
+                        <table class="tabela-separacao" style="border: 1px solid #cbd5e1; border-top: none; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 14%;">N° de Aviso</th>
+                                    <th style="width: 14%;">N° da Ordem</th>
+                                    <th style="width: 60%;">Descrição do Item</th>
+                                    <th style="width: 8%; text-align: center;">Qtd Tot</th>
+                                    <th style="width: 4%; text-align: center;">Conf</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+            }
+
+            let textoOrdens = reg.ordens.join(', ');
+            
+            htmlFinal += `
+                <tr style="page-break-inside: avoid;">
+                    <td><span style="font-family: monospace; font-size: 13px; font-weight: bold; color: #0f172a;">${reg.aviso}</span></td>
+                    <td><span style="font-family: monospace; font-size: 12px; color: #475569;">${textoOrdens}</span></td>
+                    <td>${reg.descricao}</td>
+                    <td style="text-align: center; font-size: 13px;"><strong>${reg.qtd}</strong></td>
+                    <td class="col-check"><div class="box-check"></div></td>
+                </tr>
+            `;
+        });
+
+        if (tabelaAberta) {
+            htmlFinal += `</tbody></table></div>`;
+        }
+    }
+
+    // Renderiza o resultado e libera o botão de impressão
     containerResultado.innerHTML = htmlFinal;
     btnImprimir.disabled = false;
 });
 
-// Ação do botão de impressão nativa
+// Impressão nativa
 document.getElementById('btn-imprimir').addEventListener('click', function() {
     window.print();
 });
