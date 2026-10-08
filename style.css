@@ -1,8 +1,8 @@
-/* --- CONFIGURAÇÕES DE TELA (DASHBOARD) --- */
+/* --- ESTILOS GERAIS CORPORATIVOS --- */
 body {
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-    background-color: #f8fafc;
-    color: #1e293b;
+    background-color: #f1f5f9;
+    color: #0f172a;
     margin: 0;
     padding: 20px;
 }
@@ -12,338 +12,265 @@ body {
     background: #ffffff;
     padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
     margin: 0 auto 20px auto;
     border: 1px solid #e2e8f0;
 }
 
-h2 { margin-top: 0; color: #0f172a; font-size: 22px; }
-p { color: #64748b; font-size: 14px; margin-top: -5px; margin-bottom: 25px; }
+/* TELA INICIAL DE MÓDULOS */
+.container-modulo { text-align: center; padding: 40px 30px; max-width: 900px; }
+.modulo-header h2 { margin: 0 0 8px 0; color: #0f172a; font-size: 26px; letter-spacing: 0.5px; }
+.modulo-header p { color: #64748b; font-size: 15px; margin-bottom: 35px; }
 
-.upload-section {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 25px;
+.grid-modulos { display: flex; gap: 25px; justify-content: center; }
+
+.card-modulo {
+    flex: 1; background: #ffffff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 30px 20px;
+    cursor: pointer; transition: all 0.25s ease; display: flex; flex-direction: column; align-items: center;
 }
+.card-modulo:hover { border-color: #2563eb; transform: translateY(-4px); box-shadow: 0 12px 20px -5px rgba(37, 99, 235, 0.15); }
+.card-carregamento:hover { border-color: #d97706; box-shadow: 0 12px 20px -5px rgba(217, 119, 6, 0.15); }
 
+.icon-modulo { font-size: 48px; margin-bottom: 15px; }
+.card-modulo h3 { margin: 0 0 10px 0; font-size: 20px; color: #0f172a; }
+.card-modulo p { font-size: 13px; color: #64748b; line-height: 1.4; margin-bottom: 25px; flex-grow: 1; }
+
+.btn-card { background-color: #2563eb; color: white; padding: 10px 20px; border-radius: 6px; border: none; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; }
+.btn-card-truck { background-color: #d97706; }
+.card-modulo:hover .btn-card { background-color: #1d4ed8; }
+.card-carregamento:hover .btn-card-truck { background-color: #b45309; }
+
+/* HEADER DO PAINEL */
+.header-operacao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
+.btn-voltar { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-voltar:hover { background: #e2e8f0; }
+.badge-modulo { background: #0f172a; color: #fff; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+
+/* UPLOADS E CONTROLES */
+.upload-section { display: flex; gap: 20px; margin-bottom: 20px; }
 .upload-box { flex: 1; }
+.field-label { display: block; font-weight: 600; font-size: 12px; margin-bottom: 8px; color: #475569; text-transform: uppercase; }
 
-.field-label {
-    display: block;
-    font-weight: 600;
-    font-size: 13px;
-    margin-bottom: 8px;
-    color: #475569;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.drop-zone {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 90px;
-    border: 2px dashed #cbd5e1;
-    border-radius: 8px;
-    background: #f1f5f9;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.drop-zone:hover { background: #e2e8f0; border-color: #94a3b8; }
+.drop-zone { display: flex; align-items: center; justify-content: center; height: 80px; border: 2px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; transition: all 0.2s ease; }
+.drop-zone:hover { background: #f1f5f9; border-color: #94a3b8; }
 .drop-zone input { display: none; }
-.drop-zone span { font-size: 14px; font-weight: 500; color: #334155; }
+.drop-zone span { font-size: 13px; font-weight: 600; color: #334155; }
 
-.file-status {
-    margin-top: 6px;
-    font-size: 12px;
-    color: #64748b;
-    font-style: italic;
-}
-
-/* Área de Ordenação e Opções */
-.ordenacao-section {
-    margin-bottom: 25px;
-    padding: 15px;
-    background: #f8fafc;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-}
-
-.radio-group {
-    display: flex;
-    gap: 20px;
-    margin-top: 5px;
-    flex-wrap: wrap;
-}
-
-.radio-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: #334155;
-}
-
-.radio-label input {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
+.file-status { margin-top: 6px; font-size: 12px; color: #64748b; font-style: italic; }
+.ordenacao-section { margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+.radio-group { display: flex; gap: 20px; margin-top: 5px; flex-wrap: wrap; }
+.radio-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #334155; }
 
 .actions { display: flex; gap: 12px; }
-
-button {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.15s ease;
-}
+button { padding: 12px 24px; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 .btn-primary { background-color: #2563eb; color: white; }
 .btn-primary:hover:not(:disabled) { background-color: #1d4ed8; }
 .btn-secondary { background-color: #059669; color: white; }
 .btn-secondary:hover:not(:disabled) { background-color: #047857; }
 button:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
 
-/* --- REGRAS DO CONTAINER DE IMPRESSÃO (TELA) --- */
-.print-container {
-    max-width: 1100px;
-    margin: 20px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e2e8f0;
-}
+/* CONTAINER RESULTADO IMPRESSÃO */
+.print-container { max-width: 1100px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
 
-/* Estrutura do Novo Cabeçalho Comercial (Modo Padrão) */
-.header-impressao {
-    display: table;
-    width: 100%;
-    border-bottom: 2px solid #0f172a;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-}
-.header-logo {
-    display: table-cell;
-    vertical-align: middle;
-    width: 180px;
-}
-.header-logo img {
-    max-height: 55px;
-    display: block;
-}
-.header-titulo {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: right;
-}
-.header-titulo h3 {
-    margin: 0;
-    font-size: 18px;
-    color: #0f172a;
-    letter-spacing: 0.5px;
-}
-.header-titulo .meta-data {
-    font-size: 12px;
-    color: #475569;
-    margin-top: 4px;
-}
+/* MODO SEPARAÇÃO HYPER COMPACTO (CABEÇALHOS EM CINZENTO CLARO ECO) */
+.header-hyper { display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #64748b; padding-bottom: 2px; margin-bottom: 4px; }
+.header-hyper h4 { margin: 0; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.header-hyper .meta { font-size: 9px; font-weight: 600; }
 
-/* Estilização da Tabela no Modo Padrão */
-.tabela-separacao {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    color: #1e293b;
-}
-
-.tabela-separacao th {
-    background-color: #f1f5f9;
-    color: #0f172a;
-    font-weight: 700;
+.tabela-hyper { width: 100%; border-collapse: collapse; font-size: 9px; line-height: 1.15; color: #000; }
+.tabela-hyper th {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+    font-size: 8px;
+    padding: 3px 4px;
     text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    padding: 10px 12px;
-    border-bottom: 2px solid #cbd5e1;
+    border: 1px solid #cbd5e1;
     text-align: left;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+.tabela-hyper td { padding: 2px 4px; border: 1px solid #cbd5e1; white-space: normal; word-break: break-word; vertical-align: middle; }
+
+/* SEÇÃO CLIENTE - CINZENTO CLARO ECONOMIA DE TINTA */
+.tabela-hyper tr.secao-cliente td {
+    background-color: #cbd5e1 !important;
+    color: #0f172a !important;
+    font-weight: 800;
+    font-size: 9px;
+    padding: 3px 6px !important;
+    text-transform: uppercase;
+    border: 1px solid #94a3b8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 
-.tabela-separacao td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #e2e8f0;
-    vertical-align: middle;
-}
+.col-descarte { width: 30px; text-align: center; vertical-align: middle; }
+.chk-descarte { width: 15px; height: 15px; cursor: pointer; accent-color: #ef4444; }
+tr.item-descartado { opacity: 0.35; background-color: #fee2e2 !important; text-decoration: line-through; }
 
-.tabela-separacao tbody tr:nth-child(even) {
-    background-color: #f8fafc;
-}
-
-.col-check {
-    border-left: 1px solid #cbd5e1;
-    text-align: center;
-    width: 45px;
-    padding: 0 !important;
-}
-.box-check {
-    width: 16px;
-    height: 16px;
-    border: 1px solid #94a3b8;
-    margin: 0 auto;
-    background: #fff;
-}
-
-/* --- 📊 ESTILOS DO MODO CORPORATIVO COMPACTO --- */
-.header-compacto {
+/* --- 🚚 MÓDULO CARREGAMENTO (EXPEDIÇÃO - ECO TINTA) --- */
+.header-carregamento {
+    border-bottom: 2px solid #64748b;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #0f172a;
-    padding-bottom: 6px;
+}
+
+.header-carregamento h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    text-transform: uppercase;
+}
+
+.box-modal-transporte {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 4px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
     margin-bottom: 10px;
 }
 
-.header-compacto h4 {
-    margin: 0;
-    font-size: 14px;
-    color: #0f172a;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.header-compacto .meta-info {
-    font-size: 11px;
-    color: #334155;
-}
-
-.tabela-corporativa-compacta {
+.tabela-carregamento {
     width: 100%;
     border-collapse: collapse;
-    font-size: 11px;
-    color: #0f172a;
+    font-size: 10px;
+    color: #000;
 }
 
-.tabela-corporativa-compacta th {
-    background-color: #1e293b !important;
-    color: #ffffff !important;
-    font-weight: bold;
+/* Cabeçalho da Tabela de Carregamento em Cinzento Claro */
+.tabela-carregamento th {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+    font-size: 9px;
+    padding: 5px 6px;
     text-transform: uppercase;
-    font-size: 10px;
-    padding: 5px 8px;
-    border: 1px solid #0f172a;
+    border: 1px solid #cbd5e1;
     text-align: left;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 
-.tabela-corporativa-compacta td {
-    padding: 4px 8px;
+.tabela-carregamento td {
+    padding: 4px 6px;
     border: 1px solid #cbd5e1;
     vertical-align: middle;
 }
 
-.tabela-corporativa-compacta tbody tr:nth-child(even) {
-    background-color: #f8fafc;
+/* Divisórias de Cliente em Cinzento Claro Suave */
+.tabela-carregamento tr.secao-cliente td {
+    background-color: #cbd5e1 !important;
+    color: #0f172a !important;
+    font-weight: 800;
+    font-size: 10px;
+    padding: 4px 8px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid #94a3b8 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 
-/* --- 🖨️ CONFIGURAÇÕES EXCLUSIVAS PARA IMPRESSÃO (PAPEL) --- */
+.badge-tipo {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* BADGES AUTOMÁTICOS DE MODO DE TRANSPORTE */
+.badge-transp-sedex {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    border: 1px solid #16a34a !important;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: inline-block;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.badge-transp-picape {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    border: 1px solid #d97706 !important;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: inline-block;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.badge-transp-caminhao {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    border: 1px solid #475569 !important;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: inline-block;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* --- 🖨️ ULTRA IMPRESSÃO (CONFIGURAÇÃO ECONÓMICA A4) --- */
 @media print {
-    @page {
-        size: A4;
-        margin: 8mm 8mm;
-    }
-    
-    body {
-        background: white;
-        color: #000;
-        padding: 0;
-    }
-    
-    /* Esconde a interface de upload e controles */
-    .no-print, .actions, .container, .ordenacao-section {
-        display: none !important;
-    }
-    
-    .print-container {
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-    }
+    @page { size: A4 portrait; margin: 4mm 4mm !important; }
+    body { background: white !important; color: #000 !important; padding: 0 !important; margin: 0 !important; }
+    .no-print, .actions, .container, .ordenacao-section, .col-descarte, th.col-descarte, tr.item-descartado { display: none !important; }
+    .print-container { border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; }
 
-    /* Impressão do Modo Padrão */
-    .header-impressao {
-        border-bottom: 2px solid #000 !important;
+    /* MODO HYPER COMPACTO IMPRESSÃO ECO */
+    body.modo-corporativo .tabela-hyper { font-size: 8px !important; }
+    body.modo-corporativo .tabela-hyper td { padding: 1.5px 3px !important; border: 0.5px solid #64748b !important; }
+    body.modo-corporativo .tabela-hyper th {
+        background-color: #e2e8f0 !important;
+        color: #000000 !important;
+        border: 0.5px solid #64748b !important;
     }
-
-    .tabela-separacao {
-        font-size: 12px;
-        width: 100% !important;
-    }
-
-    .tabela-separacao th {
-        background-color: #f1f5f9 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        border-bottom: 2px solid #000 !important;
-        color: #000 !important;
-    }
-
-    .tabela-separacao td {
-        border-bottom: 1px solid #94a3b8 !important;
-        color: #000 !important;
-    }
-
-    .tabela-separacao tbody tr:nth-child(even) {
-        background-color: #f8fafc !important;
+    body.modo-corporativo .tabela-hyper tr.secao-cliente td {
+        background-color: #cbd5e1 !important;
+        color: #000000 !important;
+        padding: 2px 4px !important;
+        border: 0.5px solid #64748b !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
-    .col-check {
-        border-left: 1px solid #000 !important;
-    }
-    
-    .box-check {
-        border: 1px solid #000 !important;
-    }
-
-    .tabela-separacao tr {
-        page-break-inside: avoid !important;
-    }
-
-    /* Impressão do Modo Corporativo Ultra-Compacto */
-    body.modo-corporativo .tabela-corporativa-compacta {
-        font-size: 10px !important;
-    }
-
-    body.modo-corporativo .tabela-corporativa-compacta th {
-        background-color: #000 !important;
-        color: #fff !important;
-        padding: 3px 5px !important;
-        border: 1px solid #000 !important;
-    }
-
-    body.modo-corporativo .tabela-corporativa-compacta td {
-        padding: 2px 5px !important;
+    /* CARREGAMENTO IMPRESSÃO ECO (CINZENTO CLARO SEM DESPERDÍCIO DE TINTA) */
+    .tabela-carregamento th {
+        background-color: #e2e8f0 !important;
+        color: #000000 !important;
         border: 1px solid #64748b !important;
-        color: #000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
-
-    body.modo-corporativo .header-compacto {
-        border-bottom: 2px solid #000 !important;
-        margin-bottom: 6px !important;
-        padding-bottom: 2px !important;
+    .tabela-carregamento td { border: 1px solid #64748b !important; padding: 3px 5px !important; }
+    .tabela-carregamento tr.secao-cliente td {
+        background-color: #cbd5e1 !important;
+        color: #000000 !important;
+        border: 1px solid #64748b !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 }
